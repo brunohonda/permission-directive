@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { BooleanExpression } from '../types/boolean-expression';
 
 
@@ -6,14 +6,25 @@ import { BooleanExpression } from '../types/boolean-expression';
   providedIn: 'root',
 })
 export class AuthService {
-  protected _permissions: Map<string, boolean> =  new Map<string, boolean>([
-    ['PERMISSION_1', true],
-    ['PERMISSION_2', false],
-    ['PERMISSION_3', true],
-    ['PERMISSION_4', false],
-    ['PERMISSION_5', true],
-    ['PERMISSION_6', false],
-  ]);
+  protected _permissions: WritableSignal<Map<string, boolean>> = signal(
+    new Map<string, boolean>([
+      ['PERMISSION_1', false],
+      ['PERMISSION_2', false],
+      ['PERMISSION_3', false],
+      ['PERMISSION_4', false],
+      ['PERMISSION_5', false],
+      ['PERMISSION_6', false],
+    ])
+  );
+
+  public permissions = this._permissions.asReadonly();
+
+  public changePermission(permission: string, value: boolean): void {
+    this._permissions.update((permissions) => {
+      permissions.set(permission, value);
+      return permissions;
+    });
+  }
 
   public hasPermissions(permission: BooleanExpression): boolean {
     if (typeof permission === 'string') {
@@ -41,6 +52,6 @@ export class AuthService {
   }
 
   private _hasPermissionValue(permission: string): boolean {
-    return this._permissions.get(permission) ?? false;
+    return this._permissions().get(permission) ?? false;
   }
 }

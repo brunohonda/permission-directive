@@ -9,6 +9,12 @@ describe(AuthService.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(AuthService);
+    service.changePermission('PERMISSION_1', true);
+    service.changePermission('PERMISSION_2', false);
+    service.changePermission('PERMISSION_3', true);
+    service.changePermission('PERMISSION_4', false);
+    service.changePermission('PERMISSION_5', true);
+    service.changePermission('PERMISSION_6', false);
   });
 
   it('should be created', () => {
