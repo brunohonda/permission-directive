@@ -1,0 +1,47 @@
+@use 'sass:color';
+@use './styles/variables';
+
+.container {
+  display: grid;
+  grid-template-areas: 'permissions examples';
+  grid-template-columns: auto 1fr;
+}
+
+.permissions {
+  grid-area: permissions;
+  display: flex;
+  flex-direction: column;
+  row-gap: .5rem;
+  padding: 1rem;;
+
+  .permission {
+    padding: 1rem;
+    color: $on-surface;
+    border: 1px solid $primary;
+    border-radius: .25rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: color.adjust($primary, $lightness: 10%);
+      color: $on-primary;
+    }
+
+    &--checked,
+    &--checked:hover {
+      background-color: $primary;
+      color: $on-primary;
+    }
+
+    input[type=checkbox] {
+      display: none;
+    }
+  }
+}
+
+.examples {
+  grid-area: examples;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+}

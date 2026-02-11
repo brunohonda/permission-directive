@@ -1,11 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { AuthService } from './services/auth-service';
 
-describe('App', () => {
+describe(App.name, () => {
+  let authService : AuthService;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();
+
+    authService = TestBed.inject(AuthService);
   });
 
   it('should create the app', () => {
@@ -14,10 +19,10 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render permissions', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, permission-directive');
+    expect(compiled.querySelectorAll('input[type="checkbox"]')?.length).toBe(authService.permissions().size);
   });
 });
