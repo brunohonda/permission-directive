@@ -1,4 +1,4 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { BooleanExpression } from '../types/boolean-expression';
 
 
@@ -20,38 +20,37 @@ export class AuthService {
   public permissions = this._permissions.asReadonly();
 
   public changePermission(permission: string, value: boolean): void {
-    this._permissions.update((permissions) => {
-      permissions.set(permission, value);
-      return permissions;
-    });
+    const updatedPermissions = new Map(this._permissions());
+    updatedPermissions.set(permission, value);
+
+    this._permissions.set(updatedPermissions);
   }
 
-  public hasPermissions(permission: BooleanExpression): boolean {
+  public hasPermissions (rules: BooleanExpression): Signal<boolean> {
+    return computed(() => this._evaluate(rules));
+  };
+
+  private _evaluate(permission: BooleanExpression): boolean {
     if (typeof permission === 'string') {
-      return this._hasPermissionValue(permission);
+      return this._permissions().get(permission) ?? false;
     }
 
     if (permission.and) {
       return permission.and.every(expr =>
         typeof expr === 'string'
-          ? this._hasPermissionValue(expr)
-          : this.hasPermissions(expr)
+          ? this._permissions().get(expr) ?? false
+          : this._evaluate(expr)
       );
     }
 
     if (permission.or) {
       return permission.or.some(expr =>
         typeof expr === 'string'
-          ? this._hasPermissionValue(expr)
-          : this.hasPermissions(expr)
+          ? this._permissions().get(expr) ?? false
+          : this._evaluate(expr)
       );
     }
 
-    // Segurança extra (não deveria acontecer)
     return false;
-  }
-
-  private _hasPermissionValue(permission: string): boolean {
-    return this._permissions().get(permission) ?? false;
   }
 }

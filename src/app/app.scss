@@ -3,8 +3,10 @@
 
 .container {
   display: grid;
-  grid-template-areas: 'permissions examples';
+  grid-template-areas: 'permissions examples' 'permissions-panel examples';
   grid-template-columns: auto 1fr;
+  gap: 1rem;
+  padding: 1rem;
 }
 
 .permissions {
@@ -12,24 +14,23 @@
   display: flex;
   flex-direction: column;
   row-gap: .5rem;
-  padding: 1rem;;
 
   .permission {
     padding: 1rem;
-    color: $on-surface;
-    border: 1px solid $primary;
+    color: variables.$on-surface;
+    border: 1px solid variables.$primary;
     border-radius: .25rem;
     cursor: pointer;
 
     &:hover {
-      background-color: color.adjust($primary, $lightness: 10%);
-      color: $on-primary;
+      background-color: color.adjust(variables.$primary, $lightness: 10%);
+      color: variables.$on-primary;
     }
 
     &--checked,
     &--checked:hover {
-      background-color: $primary;
-      color: $on-primary;
+      background-color: variables.$primary;
+      color: variables.$on-primary;
     }
 
     input[type=checkbox] {

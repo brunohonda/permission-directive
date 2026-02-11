@@ -1,6 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Mock } from '@vitest/spy';
 import { AuthService } from '../services/auth-service';
 import { BooleanExpression } from '../types/boolean-expression';
 import { HasPermissions } from './has-permissions';
@@ -19,26 +18,31 @@ class MockComponent {
   permissions = input<BooleanExpression>('PERMISSION_1');
 }
 
-describe.only(HasPermissions.name, () => {
+describe(HasPermissions.name, () => {
+  const authServiceMock = {
+    hasPermissions: vi.fn(),
+  };
+
   let fixture: ComponentFixture<MockComponent>;
   let component: MockComponent;
-  let hasPermissionsSpy: Mock<(permission: BooleanExpression) => boolean>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MockComponent],
+      providers: [
+        { provide: AuthService, useValue: authServiceMock },
+      ]
     }).compileComponents();
 
     const authService = TestBed.inject(AuthService);
-    hasPermissionsSpy = vi.spyOn(authService, 'hasPermissions');
+    vi.spyOn(authService, 'hasPermissions')
 
     fixture = TestBed.createComponent(MockComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
-  it('should create child', () => {
-    hasPermissionsSpy.mockReturnValue(true);
+  test('should create child', () => {
+    authServiceMock.hasPermissions.mockReturnValue(signal(true));
     fixture.componentRef.setInput('permissions', 'PERMISSION_1');
     fixture.detectChanges();
 
@@ -46,12 +50,44 @@ describe.only(HasPermissions.name, () => {
     expect(content).not.toBeNull();
   });
 
-  it.only('should not create child', () => {
-    hasPermissionsSpy.mockReturnValue(false);
-    fixture.componentRef.setInput('permissions', 'PERMISSION_2');
+  test('should not create child', () => {
+    authServiceMock.hasPermissions.mockReturnValue(signal(false));
+    fixture.componentRef.setInput('permissions', 'PERMISSION_1');
     fixture.detectChanges();
 
     const content = fixture.nativeElement.querySelector('p');
     expect(content).toBeNull();
+  });
+
+  test('should create child and destroy when rules change', () => {
+    authServiceMock.hasPermissions.mockReturnValue(signal(true));
+    fixture.componentRef.setInput('permissions', 'PERMISSION_1');
+    fixture.detectChanges();
+
+    const contentBefore = fixture.nativeElement.querySelector('p');
+    expect(contentBefore).not.toBeNull();
+    
+    authServiceMock.hasPermissions.mockReturnValue(signal(false));
+    fixture.componentRef.setInput('permissions', 'PERMISSION_2');
+    fixture.detectChanges();
+
+    const contentAfter = fixture.nativeElement.querySelector('p');
+    expect(contentAfter).toBeNull();
+  });
+
+  test('should create child and destroy when permissions change', () => {
+    const permissionSignalMock = signal(true);
+    authServiceMock.hasPermissions.mockReturnValue(permissionSignalMock);
+    fixture.componentRef.setInput('permissions', 'PERMISSION_1');
+    fixture.detectChanges();
+
+    const contentBefore = fixture.nativeElement.querySelector('p');
+    expect(contentBefore).not.toBeNull();
+
+    permissionSignalMock.set(false);
+    fixture.detectChanges();
+
+    const contentAfter = fixture.nativeElement.querySelector('p');
+    expect(contentAfter).toBeNull();
   });
 });

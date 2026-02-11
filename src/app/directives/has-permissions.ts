@@ -1,4 +1,4 @@
-import { Directive, effect, inject, input, InputSignal, TemplateRef, ViewContainerRef } from '@angular/core';
+import { computed, Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { BooleanExpression } from '../types/boolean-expression';
 
@@ -7,21 +7,23 @@ import { BooleanExpression } from '../types/boolean-expression';
   standalone: true,
 })
 export class HasPermissions {
-  private templateRef = inject(TemplateRef);
-  private viewContainer = inject(ViewContainerRef);
+  private readonly authService = inject(AuthService);
+  private readonly templateRef = inject(TemplateRef);
+  private readonly viewContainer = inject(ViewContainerRef);
 
-  private _authService = inject(AuthService);
-    
-  permissions: InputSignal<BooleanExpression> = input.required({
+  rules = input.required<BooleanExpression>({
     alias: 'appHasPermissions',
   });
+
+  private readonly hasPermission = computed(() =>
+    this.authService.hasPermissions(this.rules())()
+  );
 
   constructor() {
     effect(() => {
       this.viewContainer.clear();
-      const permissions = this.permissions();
 
-      if (this._authService.hasPermissions(permissions)) {
+      if (this.hasPermission()) {
         this.viewContainer.createEmbeddedView(this.templateRef);
       }
     });

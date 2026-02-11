@@ -17,40 +17,40 @@ describe(AuthService.name, () => {
     service.changePermission('PERMISSION_6', false);
   });
 
-  it('should be created', () => {
+  test('should be created', () => {
     expect(service).toBeTruthy();
   });
 
   describe(AuthService.prototype.hasPermissions.name, () => {
-    it('should return true if permission exists and enabled', () => {
-      expect(service.hasPermissions('PERMISSION_1')).toBe(true);
+    test('should return true if permission exists and enabled', () => {
+      expect(service.hasPermissions('PERMISSION_1')()).toBe(true);
     });
 
-    it('should return false if permission exists but disabled', () => {
-      expect(service.hasPermissions('PERMISSION_2')).toBe(false);
+    test('should return false if permission exists but disabled', () => {
+      expect(service.hasPermissions('PERMISSION_2')()).toBe(false);
     });
 
-    it('should return false if permission does not exist', () => {
-      expect(service.hasPermissions('PERMISSION_NOT_EXISTS')).toBe(false);
+    test('should return false if permission does not exist', () => {
+      expect(service.hasPermissions('PERMISSION_NOT_EXISTS')()).toBe(false);
     });
 
-    it('should return true if all permissions exist and are enabled', () => {
-      expect(service.hasPermissions({ and: ['PERMISSION_1', 'PERMISSION_3', 'PERMISSION_5'] })).toBe(true);
+    test('should return true if all permissions exist and are enabled', () => {
+      expect(service.hasPermissions({ and: ['PERMISSION_1', 'PERMISSION_3', 'PERMISSION_5'] })()).toBe(true);
     });
 
-    it('should return false if all permissions exist but one is disabled', () => {
-      expect(service.hasPermissions({ and: ['PERMISSION_1', 'PERMISSION_2', 'PERMISSION_3'] })).toBe(false);
+    test('should return false if all permissions exist but one is disabled', () => {
+      expect(service.hasPermissions({ and: ['PERMISSION_1', 'PERMISSION_2', 'PERMISSION_3'] })()).toBe(false);
     });
 
-    it('should return true if at least one permission exists but is disabled', () => {
-      expect(service.hasPermissions({ or: ['PERMISSION_1', 'PERMISSION_2', 'PERMISSION_3'] })).toBe(true)
+    test('should return true if at least one permission exists but is disabled', () => {
+      expect(service.hasPermissions({ or: ['PERMISSION_1', 'PERMISSION_2', 'PERMISSION_3'] })()).toBe(true)
     });
 
-    it('should return false if all permissions is disabled', () => {
-      expect(service.hasPermissions({ or: ['PERMISSION_2', 'PERMISSION_4', 'PERMISSION_6'] })).toBe(false);
+    test('should return false if all permissions is disabled', () => {
+      expect(service.hasPermissions({ or: ['PERMISSION_2', 'PERMISSION_4', 'PERMISSION_6'] })()).toBe(false);
     });
 
-    it('should return true with nested permissions', () => {
+    test('should return true with nested permissions', () => {
       const level3: BooleanExpression = {
         and: [
           'PERMISSION_1',
@@ -70,12 +70,12 @@ describe(AuthService.name, () => {
         ]
       };
 
-      expect(service.hasPermissions(level3)).toBe(false);
-      expect(service.hasPermissions(level2)).toBe(true);
-      expect(service.hasPermissions(level1)).toBe(true);
+      expect(service.hasPermissions(level3)()).toBe(false);
+      expect(service.hasPermissions(level2)()).toBe(true);
+      expect(service.hasPermissions(level1)()).toBe(true);
     });
 
-    it('should return false with nested permissions', () => {
+    test('should return false with nested permissions', () => {
       const level3: BooleanExpression = {
         or: [
           'PERMISSION_1',
@@ -95,9 +95,9 @@ describe(AuthService.name, () => {
         ]
       };
 
-      expect(service.hasPermissions(level3)).toBe(true);
-      expect(service.hasPermissions(level2)).toBe(false);
-      expect(service.hasPermissions(level1)).toBe(false);
+      expect(service.hasPermissions(level3)()).toBe(true);
+      expect(service.hasPermissions(level2)()).toBe(false);
+      expect(service.hasPermissions(level1)()).toBe(false);
     });
   });
 });

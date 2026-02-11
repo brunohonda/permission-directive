@@ -16,5 +16,19 @@
       </label>
     }
   </div>
-  <div class="examples"></div>
+  <div class="permissions-panel">
+    @for (permission of permissions(); track $index) {
+      <p>{{ permission[0] }}: {{ permission[1] }}</p>
+    }
+  </div>
+  <div class="examples">
+    @for (example of examples(); track $index) {
+      <div class="example">
+        <header>{{ example.title }}</header>
+        <p *appHasPermissions="example.rules">
+          Você possui permissão
+        </p>
+      </div>
+    }
+  </div>
 </div>
