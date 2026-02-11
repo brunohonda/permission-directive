@@ -21,6 +21,52 @@ export class App {
       title: 'PERMISSION_1',
       rules: 'PERMISSION_1'
     },
+    {
+      title: 'PERMISSION_1 && PERMISSION_2',
+      rules: {
+        and: [
+          'PERMISSION_1',
+          'PERMISSION_2'
+        ]
+      }
+    },
+    {
+      title: 'PERMISSION_1 || PERMISSION_2',
+      rules: {
+        or: [
+          'PERMISSION_1',
+          'PERMISSION_2'
+        ]
+      }
+    },
+    {
+      title: 'PERMISSION_1 && (PERMISSION_2 || PERMISSION_3)',
+      rules: {
+        and: [
+          'PERMISSION_1',
+          {
+            or: [
+              'PERMISSION_2',
+              'PERMISSION_3'
+            ]
+          }
+        ]
+      }
+    },
+    {
+      title: 'PERMISSION_1 || (PERMISSION_2 && PERMISSION_3)',
+      rules: {
+        or: [
+          'PERMISSION_1',
+          {
+            and: [
+              'PERMISSION_2',
+              'PERMISSION_3'
+            ]
+          }
+        ]
+      },
+    }
   ]).asReadonly();
 
 

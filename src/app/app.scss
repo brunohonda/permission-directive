@@ -4,7 +4,7 @@
 .container {
   display: grid;
   grid-template-areas: 'permissions examples' 'permissions-panel examples';
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 162px 1fr;
   gap: 1rem;
   padding: 1rem;
 }
@@ -45,4 +45,12 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 1rem;
+
+  .example {
+    background-color: color.adjust(variables.$primary, $lightness: 30%);
+    border: 1px solid variables.$primary;
+    border-radius: .25rem;
+    padding: 1rem;
+    min-width: 252px;
+  }
 }
